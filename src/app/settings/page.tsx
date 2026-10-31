@@ -55,6 +55,9 @@ export default function SettingsPage() {
     <div style={{ maxWidth: 760 }}>
       <h1>Settings — API key</h1>
       <p className="muted">BYOK: tiền gen tính thẳng vào tài khoản API của bạn. Lưu ý: <strong>OpenAI không còn API video</strong> (Sora đã tắt 24/09/2026) — video chạy bằng <strong>Gemini Veo</strong>, OpenAI lo chat Director, gen ảnh GPT Image và TTS. Key Gemini muốn gọi Veo phải gắn billing (Veo không có free tier).</p>
+      <div className="error" style={{ background: "#2e2305", borderColor: "#a16207", color: "#fde68a" }}>
+        <strong>Gemini ảnh + video = bắt buộc trả phí (từ 10/2026).</strong> Free tier của Gemini API giờ chỉ còn các model chữ (Flash/Flash-Lite) — mọi model Nano Banana và Veo đều có quota free = 0, gặp lỗi 429 <code>free_tier … limit: 0</code> thì đợi cũng không hết. Cách bật trả phí: Google AI Studio → <em>Projects</em> → chọn đúng project của API key → <em>Set up billing</em> → nạp prepay tối thiểu <strong>$5</strong> (≈ 148 ảnh Nano Banana 1K), sau đó <strong>tạo API key MỚI trong chính project đó</strong> rồi dán vào đây — key tạo trước khi gắn billing thường không kế thừa quota trả phí. Quota tính theo project, không theo key.
+      </div>
       {msg && <div className="ok">{msg}</div>}
       {error && <div className="error">{error}</div>}
 

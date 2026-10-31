@@ -26,8 +26,22 @@ async function needKey(provider: "openai" | "gemini"): Promise<string> {
 }
 
 async function fail(res: Response, what: string): Promise<never> {
-  const text = (await res.text()).slice(0, 600);
-  throw new Error(`${what} lỗi ${res.status}: ${text}`);
+  const text = await res.text();
+  // Translate the walls users actually hit into plain guidance (raw body kept short at the end).
+  if (res.status === 429 && /free_tier/i.test(text) && /limit:\s*0/.test(text)) {
+    const model = /model:\s*([a-z0-9.\-]+)/i.exec(text)?.[1] ?? "model này";
+    throw new Error(
+      `${what}: model ${model} KHÔNG có quota free tier (limit: 0) — đợi bao lâu cũng không hết lỗi này. ` +
+      `Từ 10/2026 mọi model ảnh/video của Gemini đều phải trả phí. Cách sửa: vào Google AI Studio → Projects → chọn ĐÚNG project của API key này → Set up billing → nạp prepay tối thiểu $5, rồi TẠO API KEY MỚI trong project đó (key tạo trước khi gắn billing thường không kế thừa quota trả phí) và dán key mới vào Settings. ` +
+      `Không muốn nạp Google: chuyển Provider của node sang OpenAI để gen ảnh (cần credit OpenAI). Director chat bằng model chữ Gemini vẫn free.`);
+  }
+  if (res.status === 429) {
+    throw new Error(`${what} lỗi 429 (hết quota/quá tốc độ): ${text.slice(0, 300)} — nếu là giới hạn theo phút thì đợi ~1 phút; giới hạn theo ngày reset lúc 07:00 giờ VN; quota tính theo project, tạo thêm key cùng project không giúp gì.`);
+  }
+  if (res.status === 401 || res.status === 403) {
+    throw new Error(`${what} lỗi ${res.status} (key không hợp lệ hoặc không có quyền): kiểm tra lại key trong Settings và bấm Test key. Chi tiết: ${text.slice(0, 250)}`);
+  }
+  throw new Error(`${what} lỗi ${res.status}: ${text.slice(0, 500)}`);
 }
 
 // ---------- Images ----------

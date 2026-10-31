@@ -54,6 +54,16 @@ scripts/self-check.mjs  # npm run check
 - DB là 1 file JSON (`data/db.json`), chưa phải SQLite/Postgres — nâng cấp khi cần nhiều người dùng.
 - Timeline editor kiểu Premiere — bản MVP chỉ ghép shot theo thứ tự + cắt ở mức file.
 
+## Gặp lỗi 429 `free_tier … limit: 0` khi gen ảnh/video Gemini?
+
+Đó **không phải lỗi code** và **đợi cũng không hết**: từ tháng 10/2026, free tier của Gemini API chỉ còn các model chữ — mọi model ảnh (Nano Banana) và video (Veo) đều có quota free bằng 0. Cách sửa:
+
+1. Vào [Google AI Studio](https://aistudio.google.com) → **Projects** → chọn **đúng project chứa API key** bạn đang dùng (quota tính theo project, tạo thêm key cùng project vô ích).
+2. **Set up billing** cho project → nạp prepay tối thiểu **$5** (khoảng 148 ảnh Nano Banana cỡ 1K; Veo tính theo giây).
+3. **Tạo API key mới** trong chính project vừa gắn billing (key tạo từ trước thường không kế thừa quota trả phí) → dán key mới vào trang **Settings** của app → bấm *Test key*.
+
+Chưa muốn nạp tiền cho Google: chuyển **Provider** của node sang **OpenAI** để gen ảnh (cần credit OpenAI), và dùng Director chat bằng Gemini (model chữ vẫn free) để viết/bóc kịch bản.
+
 ## Giới hạn phải biết
 
 - Veo mỗi clip 4/6/8 giây, gen mất ~1–5 phút/clip (server poll tối đa 280 giây — quá hạn hãy đổi model sang Veo Fast/Lite trong Settings).

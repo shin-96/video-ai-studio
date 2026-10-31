@@ -167,6 +167,7 @@ export default function CanvasClient({ project, initialAssets }: { project: Proj
               <option value="gemini">Gemini (ảnh Nano Banana / video Veo)</option>
               <option value="openai">OpenAI (ảnh GPT Image — video không khả dụng)</option>
             </select>
+            <p className="small muted" style={{ margin: "6px 0 0" }}>Ảnh/video Gemini cần project đã gắn billing (free tier quota = 0); ảnh OpenAI cần credit. Chat Director bằng model chữ thì free ở cả hai.</p>
             {kind === "shot" && (
               <>
                 <label className="lbl">Thời lượng clip Veo (giây)</label>
